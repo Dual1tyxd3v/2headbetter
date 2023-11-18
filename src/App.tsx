@@ -3,6 +3,10 @@ import Main from './pages/main';
 import Login from './pages/login';
 import Settings from './pages/settings';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { createContext, useState } from 'react';
+import { ContextState, TimeFrames } from './types';
+
+export const AppContext = createContext<null | ContextState>(null);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -13,16 +17,30 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  const [state, setState] = useState({
+    m1: false,
+    m5: false,
+    m15: false,
+    h1: false,
+    h4: false,
+    d: false,
+  });
+
+  const changeState = (t: TimeFrames, v: boolean) =>
+    setState((prev) => ({ ...prev, [t]: v }));
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Main />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <AppContext.Provider value={{ state, changeState }}>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Main />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/settings" element={<Settings />} />
+          </Routes>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </AppContext.Provider>
   );
 }
 

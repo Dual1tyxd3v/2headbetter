@@ -82,7 +82,7 @@ export default function Login() {
   const [formData, setFormData] = useState({ email: '', pass: '' });
   const [error, setError] = useState('');
   const { isLoading, auth } = useLogin();
-  const {isLoading: isAuthLoading} = useCheckAuth();
+  const {isLoading: isAuthLoading } = useCheckAuth();
 
   const inputHandler = (e: ChangeEvent) => {
     const input = e.target as HTMLInputElement;

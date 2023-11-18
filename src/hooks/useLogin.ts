@@ -12,6 +12,7 @@ export const useLogin = () => {
     onSuccess: (user) => {
       queryClient.setQueryData(['user'], user.user);
       navigate('/', { replace: true });
+      localStorage.setItem('user', user.user.email as string);
     },
     onError: (err) => {
       console.log(err.message);

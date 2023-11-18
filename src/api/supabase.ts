@@ -21,3 +21,11 @@ export const login = async ({ email, pass }: LoginForm) => {
 
   return data;
 };
+
+export const getData = async () => {
+  const { data, error } = await supabase.from('columns').select('*');
+
+  if (error) throw new Error(`Cant get own table\n${error}`);
+
+  return data;
+};
