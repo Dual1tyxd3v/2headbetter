@@ -20,7 +20,7 @@ html {
 body {
   font-size: 1.6rem;
   font-family: sans-serif;
-  line-height: 1.5;
+  line-height: 1;
   background-color: var(--color-main-bg);
   color: #fff;
 }
