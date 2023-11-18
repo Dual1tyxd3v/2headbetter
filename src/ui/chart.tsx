@@ -1,8 +1,9 @@
 import { ChartData } from '../types';
 import { useAppContext } from '../hooks/useAppContext';
-import { useEffect, MouseEvent } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { FaPencil } from 'react-icons/fa6';
+import Controls from './controls';
+import Edit from '../pages/edit';
 
 const Title = styled.p`
   color: #000;
@@ -50,16 +51,6 @@ const Comment = styled.p`
   display: none;
 `;
 
-const Button = styled.button`
-  width: 2.5rem;
-  height: 2.5rem;
-  background-color: transparent;
-  cursor: pointer;
-  color: #000;
-  border-radius: 3px;
-  border: 1px solid #000;
-`;
-
 export default function Chart({
   data,
   own,
@@ -69,6 +60,7 @@ export default function Chart({
 }) {
   const [timeframe, timeFrameData] = data;
   const { state, changeState } = useAppContext();
+  const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
     if (timeFrameData && !state[timeframe]) {
@@ -80,20 +72,19 @@ export default function Chart({
     changeState(timeframe, !state[timeframe]);
   }
 
-  function clickHandler2(e: MouseEvent) {
-    e.stopPropagation();
-    alert(2);
-  }
+  const switchToggleMode = useCallback(
+    () => setIsEditMode((prev) => !prev),
+    []
+  );
 
   return (
     <div>
+      {isEditMode && (
+        <Edit switchToggleMode={switchToggleMode} data={timeFrameData} timeframe={timeframe} />
+      )}
       <Head onClick={clickHandler}>
         <Title>{`${state[timeframe] ? '-' : '+'} ${timeframe}`} </Title>
-        {own && (
-          <Button onClick={clickHandler2}>
-            <FaPencil />
-          </Button>
-        )}
+        {own && <Controls switchToggleMode={switchToggleMode} />}
       </Head>
       {state[timeframe] && (
         <ImageWrapper>

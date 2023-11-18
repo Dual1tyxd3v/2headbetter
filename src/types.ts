@@ -36,3 +36,11 @@ export type ContextState = {
   };
   changeState: (t: TimeFrames, v: boolean) => void;
 };
+
+export type UploadType = {
+  file: File | null;
+  comment: string;
+  time: number;
+  timeframe: TimeFrames;
+  name: string;
+}

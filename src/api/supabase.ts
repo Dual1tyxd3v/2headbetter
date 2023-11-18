@@ -1,5 +1,5 @@
-import supabase from '../services/supabase';
-import { LoginForm } from '../types';
+import supabase, { supabaseStorage } from '../services/supabase';
+import { LoginForm, UploadType } from '../types';
 
 export const getUser = async () => {
   const { data: session } = await supabase.auth.getSession();
@@ -28,4 +28,43 @@ export const getData = async () => {
   if (error) throw new Error(`Cant get own table\n${error}`);
 
   return data;
+};
+
+export const uploadImage = async ({
+  file,
+  time,
+  comment,
+  name,
+  timeframe,
+}: UploadType) => {
+  try {
+    let fileName = '';
+    if (file) {
+      fileName = `${supabaseStorage}${time}_${file.name}`;
+      const { error } = await supabase.storage
+        .from('charts')
+        .upload(file.name, file);
+
+      if (error) throw new Error(error.message);
+    }
+    console.log(name, 'name');
+    console.log(fileName, 'f');
+    const { data, error } = await supabase
+      .from('columns')
+      .update({
+        [timeframe]: {
+          time,
+          comment,
+          img: fileName,
+        },
+      })
+      .eq('name', name)
+      .select();
+
+    if (error) throw new Error(error.message);
+
+    return data;
+  } catch (e) {
+    console.log(e);
+  }
 };

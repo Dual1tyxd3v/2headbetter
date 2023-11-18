@@ -1,7 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Main from './pages/main';
 import Login from './pages/login';
-import Settings from './pages/settings';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { createContext, useState } from 'react';
 import { ContextState, TimeFrames } from './types';
@@ -36,7 +35,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/settings" element={<Settings />} />
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>
