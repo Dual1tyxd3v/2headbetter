@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import Wrapper from '../ui/wrapper';
 import { ChangeEvent, FormEvent, useState } from 'react';
 import { useLogin } from '../hooks/useLogin';
+import Spinner from './spinner';
+import { useCheckAuth } from '../hooks/useCheckAuth';
 
 const Form = styled.form`
   width: 50%;
@@ -79,13 +81,16 @@ const Error = styled.p`
 export default function Login() {
   const [formData, setFormData] = useState({ email: '', pass: '' });
   const [error, setError] = useState('');
-  const { auth } = useLogin();
+  const { isLoading, auth } = useLogin();
+  const {isLoading: isAuthLoading} = useCheckAuth();
 
   const inputHandler = (e: ChangeEvent) => {
     const input = e.target as HTMLInputElement;
     setFormData({ ...formData, [input.id]: input.value });
     setError('');
   };
+
+  if (isLoading || isAuthLoading) return <Spinner />;
 
   const formHandler = (e: FormEvent) => {
     e.preventDefault();
@@ -99,9 +104,9 @@ export default function Login() {
     }
     auth(formData, {
       onError: () => {
-        setFormData({email: '', pass: ''});
+        setFormData({ email: '', pass: '' });
         setError('Invalid credentials');
-      }
+      },
     });
   };
   return (
@@ -116,6 +121,7 @@ export default function Login() {
             id="email"
             placeholder="example@gmail.com"
             onChange={inputHandler}
+            disabled={isLoading}
           />
         </FormField>
         <FormField>
@@ -125,10 +131,11 @@ export default function Login() {
             id="pass"
             value={formData.pass}
             onChange={inputHandler}
+            disabled={isLoading}
           />
         </FormField>
         <FormField>
-          <Button>Login</Button>
+          <Button disabled={isLoading}>Login</Button>
         </FormField>
         {error && <Error>{error}</Error>}
       </Form>
