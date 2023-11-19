@@ -1,5 +1,5 @@
 import supabase, { supabaseStorage } from '../services/supabase';
-import { LoginForm, UploadType } from '../types';
+import { DeleteData, LoginForm, UploadType } from '../types';
 
 export const getUser = async () => {
   const { data: session } = await supabase.auth.getSession();
@@ -30,7 +30,7 @@ export const getData = async () => {
   return data;
 };
 
-export const uploadImage = async ({
+export const updateData = async ({
   file,
   time,
   comment,
@@ -71,6 +71,29 @@ export const uploadImage = async ({
       .select();
 
     if (error) throw new Error(error.message);
+
+    return data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const deleteData = async ({name, timeframe, imgSrc}: DeleteData) => {
+  try {
+    const { data, error } = await supabase
+      .from('columns')
+      .update({ [timeframe]: null })
+      .eq('name', name)
+      .select();
+    if (error) throw new Error(error.message);
+
+    if (imgSrc) {
+      const fileName = imgSrc.slice(imgSrc.lastIndexOf('/') + 1);
+      const { error: deleteError } = await supabase.storage
+        .from('charts')
+        .remove([fileName]);
+      if (deleteError) throw new Error(deleteError.message);
+    }
 
     return data;
   } catch (e) {

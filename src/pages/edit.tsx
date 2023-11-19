@@ -128,13 +128,14 @@ type EditProps = {
   data: TimeframeData | null;
   switchToggleMode: () => void;
   timeframe: TimeFrames;
+  changeState: (t: TimeFrames, v: boolean) => void;
 };
 
-export default function Edit({ data, switchToggleMode, timeframe }: EditProps) {
+export default function Edit({ data, switchToggleMode, timeframe, changeState }: EditProps) {
   const { isLoading, user } = useCheckAuth();
   const [comment, setComment] = useState(data?.comment || '');
   const [file, setFile] = useState<null | File>(null);
-  const { isLoading: isUpdating, uploadImg } = useUpload();
+  const { isLoading: isUpdating, uploadData } = useUpload();
 
   function textareaHandler(e: ChangeEvent) {
     const a = e.target as HTMLTextAreaElement;
@@ -158,9 +159,12 @@ export default function Edit({ data, switchToggleMode, timeframe }: EditProps) {
 
   function saveData() {
     const time = new Date().getTime();
-    uploadImg(
+    uploadData(
       { file, comment, time, timeframe, name: user?.email as string, data },
-      { onSuccess: () => switchToggleMode() }
+      { onSuccess: () => {
+        switchToggleMode();
+        changeState(timeframe, true);
+      }}
     );
   }
 

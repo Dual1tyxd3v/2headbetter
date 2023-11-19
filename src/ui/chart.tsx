@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Controls from './controls';
 import Edit from '../pages/edit';
+import { useDelete } from '../hooks/useDelete';
+import Spinner from '../pages/spinner';
 
 const Title = styled.p`
   color: #000;
@@ -61,6 +63,7 @@ export default function Chart({
   const [timeframe, timeFrameData] = data;
   const { state, changeState } = useAppContext();
   const [isEditMode, setIsEditMode] = useState(false);
+  const { isDeleting, deleteFrame } = useDelete();
 
   useEffect(() => {
     if (timeFrameData && !state[timeframe]) {
@@ -72,19 +75,41 @@ export default function Chart({
     changeState(timeframe, !state[timeframe]);
   }
 
+  function deleteFrameData() {
+    deleteFrame({
+      name: localStorage.getItem('user') || '',
+      timeframe,
+      imgSrc: timeFrameData?.img || '',
+    });
+  }
+
+  const deleteHandle = useCallback(() => deleteFrameData(), []);
+
   const switchToggleMode = useCallback(
     () => setIsEditMode((prev) => !prev),
     []
   );
 
+  if (isDeleting) return <Spinner />;
+
   return (
     <div>
       {isEditMode && (
-        <Edit switchToggleMode={switchToggleMode} data={timeFrameData} timeframe={timeframe} />
+        <Edit
+          switchToggleMode={switchToggleMode}
+          data={timeFrameData}
+          timeframe={timeframe}
+          changeState={changeState}
+        />
       )}
       <Head onClick={clickHandler}>
         <Title>{`${state[timeframe] ? '-' : '+'} ${timeframe}`} </Title>
-        {own && <Controls switchToggleMode={switchToggleMode} />}
+        {own && (
+          <Controls
+            deleteHandle={deleteHandle}
+            switchToggleMode={switchToggleMode}
+          />
+        )}
       </Head>
       {state[timeframe] && (
         <ImageWrapper>

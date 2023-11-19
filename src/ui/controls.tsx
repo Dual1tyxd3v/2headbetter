@@ -23,9 +23,13 @@ const Button = styled.button`
 
 type ControlsProps = {
   switchToggleMode: () => void;
+  deleteHandle: () => void;
 };
 
-export default function Controls({ switchToggleMode }: ControlsProps) {
+export default function Controls({
+  switchToggleMode,
+  deleteHandle,
+}: ControlsProps) {
   function editHandler(e: MouseEvent) {
     e.stopPropagation();
     switchToggleMode();
@@ -33,6 +37,7 @@ export default function Controls({ switchToggleMode }: ControlsProps) {
 
   function deleteHandler(e: MouseEvent) {
     e.stopPropagation();
+    deleteHandle();
   }
   return (
     <Wrapper>
