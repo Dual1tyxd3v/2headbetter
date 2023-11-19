@@ -7,6 +7,11 @@ const WrapperLayout = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: var(--color-main-bg);
+  z-index: 2;
 `;
 
 export default function Wrapper({ children }: { children: ReactElement }) {

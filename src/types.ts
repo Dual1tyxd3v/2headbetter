@@ -43,4 +43,5 @@ export type UploadType = {
   time: number;
   timeframe: TimeFrames;
   name: string;
+  data: TimeframeData | null;
 }

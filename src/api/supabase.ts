@@ -36,6 +36,7 @@ export const uploadImage = async ({
   comment,
   name,
   timeframe,
+  data: oldData,
 }: UploadType) => {
   try {
     let fileName = '';
@@ -43,19 +44,27 @@ export const uploadImage = async ({
       fileName = `${supabaseStorage}${time}_${file.name}`;
       const { error } = await supabase.storage
         .from('charts')
-        .upload(file.name, file);
+        .upload(`${time}_${file.name}`, file);
 
       if (error) throw new Error(error.message);
+
+      if (oldData?.img) {
+        const imgName = oldData.img.slice(oldData.img.lastIndexOf('/') + 1);
+
+        const { error: deleteError } = await supabase.storage
+          .from('charts')
+          .remove([imgName]);
+        if (deleteError) throw new Error(deleteError.message);
+      }
     }
-    console.log(name, 'name');
-    console.log(fileName, 'f');
+
     const { data, error } = await supabase
       .from('columns')
       .update({
         [timeframe]: {
           time,
           comment,
-          img: fileName,
+          img: fileName || oldData?.img || '',
         },
       })
       .eq('name', name)
