@@ -78,7 +78,7 @@ export const updateData = async ({
   }
 };
 
-export const deleteData = async ({name, timeframe, imgSrc}: DeleteData) => {
+export const deleteData = async ({ name, timeframe, img }: DeleteData) => {
   try {
     const { data, error } = await supabase
       .from('columns')
@@ -87,8 +87,8 @@ export const deleteData = async ({name, timeframe, imgSrc}: DeleteData) => {
       .select();
     if (error) throw new Error(error.message);
 
-    if (imgSrc) {
-      const fileName = imgSrc.slice(imgSrc.lastIndexOf('/') + 1);
+    if (img) {
+      const fileName = img.slice(img.lastIndexOf('/') + 1);
       const { error: deleteError } = await supabase.storage
         .from('charts')
         .remove([fileName]);

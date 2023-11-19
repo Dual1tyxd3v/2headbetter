@@ -87,7 +87,7 @@ const Button = styled.button`
   cursor: pointer;
   width: 4rem;
   height: 4rem;
-  transition: all .2s;
+  transition: all 0.2s;
 
   & svg {
     width: 4rem;
@@ -131,11 +131,17 @@ type EditProps = {
   changeState: (t: TimeFrames, v: boolean) => void;
 };
 
-export default function Edit({ data, switchToggleMode, timeframe, changeState }: EditProps) {
+export default function Edit({
+  data,
+  switchToggleMode,
+  timeframe,
+  changeState,
+}: EditProps) {
   const { isLoading, user } = useCheckAuth();
   const [comment, setComment] = useState(data?.comment || '');
   const [file, setFile] = useState<null | File>(null);
   const { isLoading: isUpdating, uploadData } = useUpload();
+  const [isEntered, setIsEnterd] = useState(false);
 
   function textareaHandler(e: ChangeEvent) {
     const a = e.target as HTMLTextAreaElement;
@@ -147,8 +153,19 @@ export default function Edit({ data, switchToggleMode, timeframe, changeState }:
     e.stopPropagation();
   }
 
+  function dragEnterHandler(e: DragEvent) {
+    dndReset(e);
+    setIsEnterd(true);
+  }
+
+  function dragOverHandler(e: DragEvent) {
+    dndReset(e);
+    setIsEnterd(false);
+  }
+
   function dropHandler(e: DragEvent) {
     dndReset(e);
+    setIsEnterd(false);
     setFile(e.dataTransfer?.files[0]);
   }
 
@@ -161,10 +178,12 @@ export default function Edit({ data, switchToggleMode, timeframe, changeState }:
     const time = new Date().getTime();
     uploadData(
       { file, comment, time, timeframe, name: user?.email as string, data },
-      { onSuccess: () => {
-        switchToggleMode();
-        changeState(timeframe, true);
-      }}
+      {
+        onSuccess: () => {
+          switchToggleMode();
+          changeState(timeframe, true);
+        },
+      }
     );
   }
 
@@ -177,8 +196,10 @@ export default function Edit({ data, switchToggleMode, timeframe, changeState }:
       <Form>
         <ImageWrapper
           onDrop={dropHandler}
-          onDragEnter={dndReset}
+          onDragEnter={dragEnterHandler}
           onDragOver={dndReset}
+          onDragLeave={dragOverHandler}
+          className={isEntered ? 'activeZone' : ''}
         >
           <FileInputContainer>
             <FileLabel htmlFor="file_input">

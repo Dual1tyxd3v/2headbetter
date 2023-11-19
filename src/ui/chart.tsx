@@ -1,6 +1,6 @@
 import { ChartData } from '../types';
 import { useAppContext } from '../hooks/useAppContext';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Controls from './controls';
 import Edit from '../pages/edit';
@@ -64,6 +64,7 @@ export default function Chart({
   const { state, changeState } = useAppContext();
   const [isEditMode, setIsEditMode] = useState(false);
   const { isDeleting, deleteFrame } = useDelete();
+  const imgSrc = useRef(null);
 
   useEffect(() => {
     if (timeFrameData && !state[timeframe]) {
@@ -76,10 +77,14 @@ export default function Chart({
   }
 
   function deleteFrameData() {
+    let img = '';
+    if (imgSrc.current) {
+      img = (imgSrc.current as HTMLImageElement).src;
+    }
     deleteFrame({
       name: localStorage.getItem('user') || '',
       timeframe,
-      imgSrc: timeFrameData?.img || '',
+      img
     });
   }
 
@@ -115,7 +120,7 @@ export default function Chart({
         <ImageWrapper>
           {timeFrameData && (
             <>
-              <Image src={timeFrameData.img} referrerPolicy="no-referrer" />
+              <Image ref={imgSrc} src={timeFrameData.img} referrerPolicy="no-referrer" />
               {timeFrameData.comment && (
                 <Comment>{timeFrameData.comment}</Comment>
               )}

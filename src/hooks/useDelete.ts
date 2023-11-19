@@ -5,8 +5,8 @@ import { DeleteData } from '../types';
 export const useDelete = () => {
   const queryClient = useQueryClient();
   const { isPending: isDeleting, mutate: deleteFrame } = useMutation({
-    mutationFn: ({ name, imgSrc, timeframe }: DeleteData) =>
-      deleteData({ name, imgSrc, timeframe }),
+    mutationFn: ({ name, timeframe, img }: DeleteData) =>
+      deleteData({ name, timeframe, img }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['ownData'],

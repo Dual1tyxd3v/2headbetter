@@ -62,6 +62,24 @@ button {
   border: none;
   outline: none;
 }
+
+.activeZone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:before {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    width: 90%;
+    height: 56vh;
+    margin: 0 auto;
+    background-color: rgba(54, 21, 21, .7);
+    display: block;
+    content: "";
+  }
+}
 `;
 
 export default GlobalStyles;

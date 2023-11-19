@@ -49,5 +49,5 @@ export type UploadType = {
 export type DeleteData = {
   name: string;
   timeframe: TimeFrames;
-  imgSrc: string;
+  img: string;
 };
